@@ -27,26 +27,33 @@ def show_start_screen():
     DISPLAYSURF.blit(pygame.image.load('start_screnn.png'), (Width/2-150, Height/2-150))
     pass
 
+def start_button_pressed():
+    pass
+
 def Update():
     global game_state  # Make sure to modify the global 'game_state' variable
     if game_state == 0:
-        if pygame.key.get_pressed()[pygame.K_SPACE]:
+        if pygame.key.get_pressed()[pygame.K_1]:
             game_state = 1
-            print( "game startedUpdate")
+            print( "game started changed to 1")
     elif game_state == 1:
-        if pygame.key.get_pressed()[pygame.K_a]:
+        if pygame.key.get_pressed()[pygame.K_2]:
             game_state = 2
-            print ("game over")
-        
+            print ("game started changed to 2")
+    elif game_state == 2:
+        if pygame.key.get_pressed()[pygame.K_3]:
+            game_state = 0
+            print ("game started changed to 0")
            
 
 def Draw(): 
     if game_state == 0:
         show_start_screen()
+        print ("Draw State 0")
     if game_state == 1:
-        print ("game startedDraw")
+        print ("Draw State 1")
     elif game_state == 2:
-        print ("game over")
+        print ("Draw State 2")
     pass
 
 while True:
