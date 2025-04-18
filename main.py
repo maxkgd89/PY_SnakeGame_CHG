@@ -5,10 +5,13 @@ import pygame.key
 
 pygame.init()
 # Global vars
-Width = 500
-Height = 500
 Board_Offset_X=10
 Board_Offest_Y=40
+Board_Grid_Size = 14
+Board_max_x = 35
+Board_max_y = 35
+Width = (Board_Offset_X*2)+(Board_Grid_Size*(Board_max_x+1))
+Height = (Board_Offest_Y*2)+(Board_Grid_Size*(Board_max_y+1))
 
 # Game States
 # 0- Start
