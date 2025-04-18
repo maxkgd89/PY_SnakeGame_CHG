@@ -15,7 +15,9 @@ Board_Offest_Y=40
 # 1- Play
 # 2- Dead
 game_state = 0
-score = 10
+score = 0
+size = 1
+speed =1
 
 
 DISPLAYSURF = pygame.display.set_mode((Width, Height))
@@ -52,6 +54,13 @@ def draw_screen():
     text_surface = font.render("Score:"+str(score), True, (0, 255, 0))
     DISPLAYSURF.blit(text_surface, (Board_Offset_X, Board_Offest_Y/2))
 
+    font = pygame.font.Font(None, 24) # Assuming you want a default font with 24pt size
+    text_surface = font.render("Size:"+str(size), True, (0, 255, 0))
+    DISPLAYSURF.blit(text_surface, (Board_Offset_X+200, Board_Offest_Y/2))
+    
+    font = pygame.font.Font(None, 24) # Assuming you want a default font with 24pt size
+    text_surface = font.render("Speed:"+str(speed), True, (0, 255, 0))
+    DISPLAYSURF.blit(text_surface, (Board_Offset_X+100, Board_Offest_Y/2))
 
 def Update():
     global game_state  # Make sure to modify the global 'game_state' variable
@@ -70,7 +79,7 @@ def Update():
            
 
 def Draw(): 
-    DISPLAYSURF.fill((0, 0, 0))  # Clear screen with black color
+     # Clear screen with black color
     if game_state == 0:
         show_start_screen()
         print ("Draw State 0")
@@ -78,6 +87,7 @@ def Draw():
         draw_screen()
         print ("Draw State 1")
     elif game_state == 2:
+        DISPLAYSURF.fill((0, 0, 0))
         print ("Draw State 2")
     pass
 
