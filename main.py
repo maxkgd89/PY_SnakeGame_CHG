@@ -70,6 +70,7 @@ def Update():
            
 
 def Draw(): 
+    DISPLAYSURF.fill((0, 0, 0))  # Clear screen with black color
     if game_state == 0:
         show_start_screen()
         print ("Draw State 0")
@@ -77,7 +78,6 @@ def Draw():
         draw_screen()
         print ("Draw State 1")
     elif game_state == 2:
-        
         print ("Draw State 2")
     pass
 
