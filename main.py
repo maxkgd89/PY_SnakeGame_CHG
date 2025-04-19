@@ -110,7 +110,7 @@ def handle_input():
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if game_state == 0 and event.key == pygame.K_1: 
+            if game_state == 0 and event.key == pygame.: 
                 return 1  # Signal to start the game
             elif game_state == 1:
                 if event.key == pygame.K_UP:
