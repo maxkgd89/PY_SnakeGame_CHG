@@ -22,11 +22,25 @@ score = 0
 size = 1
 speed =1
 
-
 DISPLAYSURF = pygame.display.set_mode((Width, Height))
 pygame.display.set_caption('Hello World!')
 
+# Class definition
 
+class Position:
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
+class Snake:
+    def __init__(self):
+        self.body_position = Position(2,2)
+    def render(self):
+        print ("HI")
+        # body_screen_pos = get_screen_coords(self.body_position)
+        # body_rect=pygame.Rect(body_screen_pos.x, body_screen_pos.y, Board_Grid_Size, Board_Grid_Size)
+        # pygame.draw.rect(DISPLAYSURF, (0, 200, 0), body_rect, 3)
+
+# Function Defenintion
 
 def show_start_screen():
     pygame.display.set_caption('Start Screen')
@@ -65,6 +79,11 @@ def draw_screen():
     text_surface = font.render("Speed:"+str(speed), True, (0, 255, 0))
     DISPLAYSURF.blit(text_surface, (Board_Offset_X+100, Board_Offest_Y/2))
 
+def get_screen_coords(position):
+    x = Board_Offset_X + (position.x*Board_Grid_Size)
+    y = Board_Offest_Y + (position.y*Board_Grid_Size)
+    return Position(x,y)
+
 def Update():
     global game_state  # Make sure to modify the global 'game_state' variable
     if game_state == 0:
@@ -87,7 +106,9 @@ def Draw():
         show_start_screen()
         print ("Draw State 0")
     if game_state == 1:
+        DISPLAYSURF.fill((0, 0, 0))
         draw_screen()
+        Snake.render()
         print ("Draw State 1")
     elif game_state == 2:
         DISPLAYSURF.fill((0, 0, 0))
