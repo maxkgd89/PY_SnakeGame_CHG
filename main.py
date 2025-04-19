@@ -1,10 +1,12 @@
-import pygame, sys
-from pygame.locals import QUIT
-import pygame.key
+import sys
 
+import pygame
+import pygame.key
+from pygame.locals import QUIT
 
 pygame.init()
 # Global vars
+time = 5
 Board_Offset_X=10
 Board_Offest_Y=40
 Board_Grid_Size = 14
@@ -12,6 +14,7 @@ Board_max_x = 35
 Board_max_y = 35
 Width = (Board_Offset_X*2)+(Board_Grid_Size*(Board_max_x+1))
 Height = (Board_Offest_Y*2)+(Board_Grid_Size*(Board_max_y+1))
+Snake_Min_Speed = 10
 
 # Game States
 # 0- Start
@@ -34,11 +37,40 @@ class Position:
 class Snake:
     def __init__(self):
         self.body_position = Position(2,2)
+        self.direction = 1
+        self.move_delay = Snake_Min_Speed
+        self.move_delay_counter = self.move_delay
     def render(self):
-        print ("HI")
-        # body_screen_pos = get_screen_coords(self.body_position)
-        # body_rect=pygame.Rect(body_screen_pos.x, body_screen_pos.y, Board_Grid_Size, Board_Grid_Size)
-        # pygame.draw.rect(DISPLAYSURF, (0, 200, 0), body_rect, 3)
+        body_screen_pos = get_screen_coords(self.body_position)
+        body_rect = pygame.Rect(
+            body_screen_pos.x, 
+            body_screen_pos.y, 
+            Board_Grid_Size, 
+            Board_Grid_Size)
+        pygame.draw.rect(DISPLAYSURF, (0, 200, 0), body_rect, 3)
+    def move(self):
+        #print("move")
+        # 0 = up
+        # 1 = right
+        # 2 = down
+        # 3 = left
+        if self.direction == 0: #UP
+            self.body_position.y -= 1
+        elif self.direction == 1: #RIGHT
+            self.body_position.x = self.body_position.x +1
+            print(self.body_position.x)
+        elif self.direction == 2: #DOWN
+            self.body_position.y += 1
+        elif self.direction == 3: #LEFT
+            self.body_position.x -= 1
+            
+    def change_direction(self, new_direction):
+        # Prevent 180-degree turns
+        if abs(new_direction - self.direction) != 2:
+            self.direction = new_direction
+
+# Create snake instance outside the game loop
+snake = Snake()
 
 # Function Defenintion
 
@@ -46,18 +78,6 @@ def show_start_screen():
     pygame.display.set_caption('Start Screen')
     #pygame.display.setimage('start_screnn.png')
     DISPLAYSURF.blit(pygame.image.load('start_screnn.png'), (Width/2-150, Height/2-150))
-
-def start_button_pressed():
-    if pygame.key.get_pressed()[pygame.K_1]:
-        return True
-    else:
-        return False
-
-def restart_button_pressed():
-    if pygame.key.get_pressed()[pygame.K_3]:
-        return True
-    else:
-        return False
 
 def draw_screen():
     top_left_x = Board_Offset_X - 1
@@ -84,46 +104,68 @@ def get_screen_coords(position):
     y = Board_Offest_Y + (position.y*Board_Grid_Size)
     return Position(x,y)
 
+def handle_input():
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if game_state == 0 and event.key == pygame.K_1: 
+                return 1  # Signal to start the game
+            elif game_state == 1:
+                if event.key == pygame.K_UP:
+                    snake.change_direction(0)
+                elif event.key == pygame.K_RIGHT:
+                    snake.change_direction(1)
+                elif event.key == pygame.K_DOWN:
+                    snake.change_direction(2)
+                elif event.key == pygame.K_LEFT:
+                    snake.change_direction(3)
+                elif event.key == pygame.K_2:
+                    return 2
+            elif game_state == 3 and event.key == pygame.K_3:
+                return 3
+                
+            # Signal to change to game over state
+    return None
+
 def Update():
     global game_state  # Make sure to modify the global 'game_state' variable
+    input_result = handle_input()
     if game_state == 0:
-        if start_button_pressed():
+        if input_result == 1:
             game_state = 1
             print( "game started changed to 1")
-    elif game_state == 1:
-        if pygame.key.get_pressed()[pygame.K_2]:
+    elif game_state == 1: #playing
+        if input_result == 2:
             game_state = 2
             print ("game started changed to 2")
+        else:
+            snake.move()
     elif game_state == 2:
-        if restart_button_pressed():
+        if input_result == 2:
             game_state = 0
             print ("game started changed to 0")
            
 
 def Draw(): 
-     # Clear screen with black color
+    DISPLAYSURF.fill((0, 0, 0)) # Clear screen with black color
     if game_state == 0:
         show_start_screen()
         print ("Draw State 0")
     if game_state == 1:
-        DISPLAYSURF.fill((0, 0, 0))
         draw_screen()
-        Snake.render()
+        snake.render()
         print ("Draw State 1")
     elif game_state == 2:
         DISPLAYSURF.fill((0, 0, 0))
         print ("Draw State 2")
-    pass
+
+clock = pygame.time.Clock()
 
 while True:
-   for event in pygame.event.get():
     Update()
     Draw()
-    if event.type == QUIT:
-           pygame.quit()
-           sys.exit()
-   pygame.display.update()
-
-
-
+    pygame.display.update()
+    clock.tick(time)
 
