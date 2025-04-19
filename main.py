@@ -121,10 +121,10 @@ def handle_input():
                     snake.change_direction(2)
                 elif event.key == pygame.K_LEFT:
                     snake.change_direction(3)
-                elif event.key == pygame.K_2:
-                    return 2
-            elif game_state == 3 and event.key == pygame.K_3:
-                return 3
+                elif event.key == pygame.K_SPACE:
+                    return 2 # Finish game
+            elif game_state == 2 and event.key == pygame.K_SPACE:
+                return 3 # Restart game
                 
             # Signal to change to game over state
     return None
@@ -143,7 +143,7 @@ def Update():
         else:
             snake.move()
     elif game_state == 2:
-        if input_result == 2:
+        if input_result == 3:
             game_state = 0
             print ("game started changed to 0")
            
