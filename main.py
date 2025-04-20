@@ -6,7 +6,7 @@ from pygame.locals import QUIT
 
 pygame.init()
 # Global vars
-time = 5
+time = 5 #snake speed
 Board_Offset_X=10
 Board_Offest_Y=40
 Board_Grid_Size = 14
@@ -14,7 +14,8 @@ Board_max_x = 35
 Board_max_y = 35
 Width = (Board_Offset_X*2)+(Board_Grid_Size*(Board_max_x+1))
 Height = (Board_Offest_Y*2)+(Board_Grid_Size*(Board_max_y+1))
-Snake_Min_Speed = 10
+snake_start_length = 15
+#Snake_Min_Speed = 10
 
 # Game States
 # 0- Start
@@ -30,44 +31,80 @@ pygame.display.set_caption('Hello World!')
 
 # Class definition
 
-class Position:
+class Position: #so called class and constructor function
     def __init__(self,x,y):
         self.x=x
         self.y=y
-class Snake:
-    def __init__(self):
-        self.body_position = Position(2,2)
-        self.direction = 1
-        self.move_delay = Snake_Min_Speed
-        self.move_delay_counter = self.move_delay
+class BodyPart:
+    def __init__(self, x,y, type):
+        self.position = Position(x,y) # instance of Position
+        self.type = type
     def render(self):
-        body_screen_pos = get_screen_coords(self.body_position)
+        colour = (0, 0, 0)
+        body_screen_pos = get_screen_coords(self.position)
         body_rect = pygame.Rect(
             body_screen_pos.x, 
             body_screen_pos.y, 
             Board_Grid_Size, 
             Board_Grid_Size)
-        pygame.draw.rect(DISPLAYSURF, (0, 200, 0), body_rect, 3)
-    def move(self):
+        if self.type == "head":
+            colour = (0, 200,0)
+        elif self.type == "body":
+            colour = (0, 100,0)
+        pygame.draw.rect(DISPLAYSURF, colour, 
+                         body_rect, 3)
+        
+    def move(self, direction):
         #print("move")
         # 0 = up
         # 1 = right
         # 2 = down
         # 3 = left
-        if self.direction == 0: #UP
-            self.body_position.y -= 1
-        elif self.direction == 1: #RIGHT
-            self.body_position.x = self.body_position.x +1
-            print(self.body_position.x)
-        elif self.direction == 2: #DOWN
-            self.body_position.y += 1
-        elif self.direction == 3: #LEFT
-            self.body_position.x -= 1
-            
+        if direction == 0: #UP
+            self.position.y -= 1
+        elif direction == 1: #RIGHT
+            self.position.x +=1
+        elif direction == 2: #DOWN
+            self.position.y += 1
+        elif direction == 3: #LEFT
+            self.position.x -= 1
+
+    def update_position(self, position):
+        self.position.x = position.x
+        self.position.y = position.y
+
+class Snake:
+    def __init__(self):
+        #self.body_position = Position(2,2)
+        self.direction = 1
+        #self.move_delay = Snake_Min_Speed
+        #self.move_delay_counter = self.move_delay
+        self.body = []
+        self.body.append(BodyPart(2,2, "head"))
+        self.grow(snake_start_length-1)
+
+    def render(self):
+        for body_part in self.body:
+            body_part.render()
+
+    def grow(self,size):
+        for count in range(0,size):
+            position = self.body[len(self.body)-1].position
+            #the very last body part
+            self.body.append(BodyPart(
+                position.x,position.y,"body"))
+
     def change_direction(self, new_direction):
         # Prevent 180-degree turns
         if abs(new_direction - self.direction) != 2:
             self.direction = new_direction
+    def move(self):
+        for index in range(len(self.body)-1, 0, -1):
+        # body parts 
+            self.body[index].update_position(self.body[index-1].position)
+        # head move
+        self.body[0].move(self.direction)
+
 
 # Create snake instance outside the game loop
 snake = Snake()
@@ -99,7 +136,7 @@ def draw_screen():
     text_surface = font.render("Speed:"+str(speed), True, (0, 255, 0))
     DISPLAYSURF.blit(text_surface, (Board_Offset_X+100, Board_Offest_Y/2))
 
-def get_screen_coords(position):
+def get_screen_coords(position): # Translate board position to screen position
     x = Board_Offset_X + (position.x*Board_Grid_Size)
     y = Board_Offest_Y + (position.y*Board_Grid_Size)
     return Position(x,y)
